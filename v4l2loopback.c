@@ -1737,13 +1737,7 @@ static int vidioc_qbuf(struct file *file, void *fh, struct v4l2_buffer *buf)
 			buf->length, buf->flags, buf->field,
 			(long long)buf->timestamp.tv_sec,
 			(long int)buf->timestamp.tv_usec, buf->sequence);
-		if ((!(b->buffer.flags & V4L2_BUF_FLAG_TIMESTAMP_COPY)) &&
-		    (buf->timestamp.tv_sec == 0 && buf->timestamp.tv_usec == 0))
-			v4l2l_get_timestamp(&b->buffer);
-		else {
-			b->buffer.timestamp = buf->timestamp;
-			b->buffer.flags |= V4L2_BUF_FLAG_TIMESTAMP_COPY;
-		}
+		v4l2l_get_timestamp(&b->buffer);
 		if (dev->pix_format_has_valid_sizeimage) {
 			if (buf->bytesused >= dev->pix_format.sizeimage) {
 				b->buffer.bytesused = dev->pix_format.sizeimage;
