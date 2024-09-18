@@ -1737,7 +1737,9 @@ static int vidioc_qbuf(struct file *file, void *fh, struct v4l2_buffer *buf)
 			buf->length, buf->flags, buf->field,
 			(long long)buf->timestamp.tv_sec,
 			(long int)buf->timestamp.tv_usec, buf->sequence);
-		v4l2l_get_timestamp(&b->buffer);
+		b->buffer.timestamp = buf->timestamp;
+		b->buffer.flags |= V4L2_BUF_FLAG_TIMESTAMP_COPY;
+		// v4l2l_get_timestamp(&b->buffer);
 		if (dev->pix_format_has_valid_sizeimage) {
 			if (buf->bytesused >= dev->pix_format.sizeimage) {
 				b->buffer.bytesused = dev->pix_format.sizeimage;
@@ -2348,6 +2350,11 @@ static ssize_t v4l2_loopback_write(struct file *file, const char __user *buf,
 		return -EFAULT;
 	}
 	v4l2l_get_timestamp(b);
+	// // relay timestamp
+	// b->timestamp.tv_sec = 999 //(long)*(u8 *)(dev->write_position + b->m.offset);
+	// b->timestamp.tv_usec = 0;
+	// b->flags |= V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+
 	b->bytesused = count;
 	b->sequence = dev->write_position;
 	buffer_written(dev, &dev->buffers[write_index]);
